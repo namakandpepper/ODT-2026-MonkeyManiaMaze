@@ -563,9 +563,11 @@ Insert a sketch or screenshot of the app interface.
 
 | Item | Quantity | In Kit? | Need to Buy? | Estimated Cost | Material / Spec | Why This Choice? |
 |---|---:|---|---|---:|---|---|
-| `[ESP32]` | `1` | `Yes` | `No` | `0` | `[Spec]` | `[Reason]` |
-| `[Item]` | `[Qty]` | `[Yes/No]` | `[Yes/No]` | `[Cost]` | `[Spec]` | `[Reason]` |
-| `[Item]` | `[Qty]` | `[Yes/No]` | `[Yes/No]` | `[Cost]` | `[Spec]` | `[Reason]` |
+| `[ESP32]` | `1` | `Yes` | `No` | `0` | `[Spec]` | `[Enables wireless keyboard input and touch sensing in one board]` |
+| `[Jumper Wires]` | `[81]` | `[Yes]` | `[No]` | `[0]` | `[81]` | `[[connection between Neopixels, Switches and ESP32 pins]]` |
+| `[FoamBoard]` | `[2]` | `[No]` | `[No]` | `[0]` | `[28 × 28 inches]` | `[Build the overall maze structure/box/structural lifts]` |
+| `[A3 paper/Chart Paper/Corrogated paper]` | `[8]` | `[No]` | `[Yes]` | `[150]` | `[120/150 gsm A3/A2]` | `[Cover the foamboard, decor, structural value]` |
+| `[Gluestick/Fevicol]` | `[1]` | `[No]` | `[Yes]` | `[150]` | `[120/150 gsm A3/A2]` | `[Cover the foamboard, decor, structural value]` |
 
 ## 12.2 Material Justification
 Explain why you selected your main materials and components.
