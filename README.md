@@ -265,7 +265,9 @@ App Interaction: There is no external app; the entire interaction is physical an
 Add an early sketch of the full idea.
 
 **Insert image below:**  
-`[Upload image and link here]`
+`<img width="1200" height="1600" alt="image" src="https://github.com/user-attachments/assets/5497908b-0d5b-498d-9bad-2029eac7c68d" />`
+<img width="1200" height="1600" alt="image" src="https://github.com/user-attachments/assets/ace0bfb4-2878-4ea7-8326-0f6bd09bee44" />
+
 
 Example:
 ```md
@@ -281,7 +283,7 @@ Add a sketch with labels showing:
 - output elements.
 
 **Insert image below:**  
-`[Upload image and link here]`
+`<img width="1136" height="1600" alt="image" src="https://github.com/user-attachments/assets/ca29eae9-01c9-4ecd-b1dc-be192d202e55" />`
 
 ## 7.3 Approximate Dimensions
 
@@ -568,6 +570,8 @@ Insert a sketch or screenshot of the app interface.
 | `[FoamBoard]` | `[2]` | `[No]` | `[No]` | `[0]` | `[28 × 28 inches]` | `[Build the overall maze structure/box/structural lifts]` |
 | `[A3 paper/Chart Paper/Corrogated paper]` | `[8]` | `[No]` | `[Yes]` | `[150]` | `[120/150 gsm A3/A2]` | `[Cover the foamboard, decor, structural value]` |
 | `[Gluestick/Fevicol]` | `[1]` | `[No]` | `[Yes]` | `[150]` | `[120/150 gsm A3/A2]` | `[Cover the foamboard, decor, structural value]` |
+| `[Buck Converter]` | `[1]` | `[No]` | `[No (borrowed)]` | `[0]` | `[N/A]` | `[Power Supply was insufficient]` |
+| `[LED Strips]` | `[3 meters]` | `[No]` | `[Yes]` | `[600rs]` | `[3 meters]` | `[Maze Path]` |
 
 ## 12.2 Material Justification
 Explain why you selected your main materials and components.
@@ -579,31 +583,35 @@ Examples:
 - Why bearing instead of a plain shaft hole?
 
 **Response:**  
-`[Write here]`
+`[The materials and components were chosen based on availability, ease of use, and suitability for a quick interactive prototype. Foamboard was used for the structure because it is lightweight, easy to cut, we didn't use MDF since there were so many changes along the fabrication, and sturdy enough to support the LED layout, making it ideal for building the maze form without complex tools. Paper materials like chart paper and corrugated sheets were used to cover and decorate the structure, adding visual clarity and reinforcing the forest theme while also improving the overall finish.
+
+Neopixel LED strips were selected because they allow individual control of each LED, which is essential for showing movement and colour changes within the maze. Jumper wires and basic soldering were used to connect multiple LED segments due to layout constraints, ensuring flexibility in building the maze shape. The buck converter was included to provide stable power to the LEDs, as the initial supply was insufficient, making the system more reliable. Overall, the choices prioritised flexibility and cost-effectiveness while supporting the interactive experience.]`
 
 ## 12.3 Items to Purchase Separately
 
 | Item | Why Needed | Purchase Link | Latest Safe Date to Procure | Status |
 |---|---|---|---|---|
-| `[Item]` | `[Reason]` | `[Link]` | `[Date]` | `[Pending / Ordered / Received]` |
-| `[Item]` | `[Reason]` | `[Link]` | `[Date]` | `[Pending / Ordered / Received]` |
+| `[LED strips]` | `[Maze path]` | `[https://www.digikey.in/en/products/detail/sparkfun-electronics/12021/5673739]` | `[10/04/2026]` | `[Recieved` |
+| `[Buck converter]` | `[supply power]` | `[https://robocraze.com/products/lm2596-dc-dc-step-down-buck-module-with-display?variant=44512742342880&country=IN&currency=INR&utm_medium=product_sync&utm_source=bing&utm_content=sag_organic&utm_campaign=sag_organic&utm_source=bing&utm_medium=ppc&utm_campaign=523565826&utm_content=_&utm_term=&campaignid=523565826&adgroupid=1327113235784461&campaign=523565826&msclkid=a81105f5a75d18d238696c1c16b21277]` | `[10/04/2026]` | `[Recieved]` |
+| `[Coloured chart paper]` | `[visuals]` | `[https://www.amazon.in/Collections-Multicolor-Bright-Pastel-Drawing/dp/B0CJPZZ8L5/ref=sr_1_9?adgrpid=1312818493089728&dib=eyJ2IjoiMSJ9.uodJPqmjjgzA4T9ghJ6zbAbaJh20x2mu-MC4gJBaJ4YpiwIkxZn_WBUfE8yKq14RoQA01zBXHnXXJRMfSlV2pCE18ZG_lpF8gD7M1iccUECWSv_ybHX6ry64wSn2pq-cuDESRH2NFAMdtrpx0aIN5k0XdWsSLHEyKeNTx9DuZuol40nfHX7bfLYnqsvirJYITa2TomzsMcJpADXZvrigs1n1VswErSpNKGGgR_pOUKg-trO_p2zuO0Yt2VIih_xfWHooG129l0v0bgwXoEre_ngW043jvQC_wdR7AmCs_b4.xBBL0THSLp0qw2uh1m5UlTJR3gO1hFzgC1JbYRA3oXE&dib_tag=se&hvadid=82051414146659&hvbmt=bb&hvdev=c&hvlocphy=148579&hvnetw=o&hvqmt=b&hvtargid=kwd-82052037257254%3Aloc-90&hydadcr=7700_1981652&keywords=craft%2Bchart%2Bpaper&mcid=54f7a634cc713c1b85b283bd68d19608&msclkid=8cb564ca880b166f2b890d233a296069&nsdOptOutParam=true&qid=1776923174&sr=8-9&th=1]` | `[10/04/2026]` | `[Recieved]` |
+| `[Corrugated sheet]` | `[visuals]` | `[https://www.amazon.in/Multicolour-Corrugated-Scrapbook-Decoration-Multipurpose/dp/B0FG95G44R/ref=sr_1_6?crid=1QUE74ENUY3QL&dib=eyJ2IjoiMSJ9.uHh7YZb4IUlycsNKaysb6YRTc-16CQE0nyOdZJx8A1jXwZtChNqCgO-Gg4LoIqdxaDyPxaa6VaJAhGgzU8BuGv022WeOdMgmQskZb0aeyO3KUeKuggtd2XF46R2HGRqbP-l8U_h-D_phuxR9g-ETODCZWpx3b1Edb5TQSrsY4qVguYZyXD4u-adwkVUcdeVce0V3sDAGQGW387a5ZWcT3WHz63BUjlLKkHGHE8eV_PWVMcqvvvTd-0ffQcLiI05Up4s25egEP0I51z2lFY6ei2uco1gm7OrBLGniGJuCJZM.yzSfqbDymYgIOluNfNjKSYBFf-bTqVOt2g3Oi3jiNDs&dib_tag=se&keywords=corrugated+sheet&qid=1776923209&sprefix=corrugated+she%2Caps%2C415&sr=8-6]` | `[10/04/2026]` | `[Ordered]` |
 
 ## 12.4 Budget Summary
 
 | Budget Item | Estimated Cost |
 |---|---:|
-| Electronics | `[Cost]` |
-| Mechanical parts | `[Cost]` |
-| Fabrication materials | `[Cost]` |
-| Purchased extras | `[Cost]` |
-| Contingency | `[Cost]` |
-| **Total** | `[Cost]` |
+| Electronics | `[600]` |
+| Mechanical parts | `[-]` |
+| Fabrication materials | `[200]` |
+| Purchased extras | `[125]` |
+| Contingency | `[-]` |
+| **Total** | `[925]` |
 
 ## 12.5 Budget Reflection
 If your cost is too high, what can be simplified, removed, substituted, or shared?
 
 **Response:**  
-`[Write here]`
+`[Not Applicable]`
 
 ---
 
@@ -620,32 +628,35 @@ Include:
 - how documentation will be maintained.
 
 **Response:**  
-`[Write here]`
+`[Our team worked by dividing responsibilities based on individual strengths while still collaborating on key decisions. suhana primarily focused on fabrication, including building the foamboard structure, assembling the maze layout, and handling visual elements and finishing. nitya focused on the technical aspects such as coding, circuit setup, soldering, and ensuring the system functioned correctly. despite this division, both members were involved in testing, troubleshooting, and refining the overall experience.
+
+decisions were made through discussion, especially when it came to changes in the concept, layout, or system behaviour. we regularly checked progress by reviewing both the physical build and the code together, ensuring that all parts were aligned and functioning as intended. if a task was delayed, we adjusted by redistributing smaller responsibilities or working together to complete critical parts, particularly during troubleshooting stages. documentation was maintained alongside the process, with notes and images that captured changes, and final outcomes.
+]`
 
 ## 13.2 Task Breakdown
 
 | Task ID | Task | Owner | Estimated Hours | Deadline | Dependency | Status |
 |---|---|---|---:|---|---|---|
-| T1 | `[Finalize concept]` | `[Name]` | `2` | `[Date]` | `None` | `To Do` |
-| T2 | `[Complete BOM]` | `[Name]` | `1` | `[Date]` | `T1` | `To Do` |
-| T3 | `[Test electronics]` | `[Name]` | `2` | `[Date]` | `T1` | `To Do` |
-| T4 | `[Build structure]` | `[Name]` | `4` | `[Date]` | `T1` | `To Do` |
-| T5 | `[Write control code]` | `[Name]` | `4` | `[Date]` | `T3` | `To Do` |
-| T6 | `[Integrate system]` | `[Name]` | `4` | `[Date]` | `T4, T5` | `To Do` |
-| T7 | `[Playtest]` | `[Name]` | `2` | `[Date]` | `T6` | `To Do` |
-| T8 | `[Refine and document]` | `[Name]` | `3` | `[Date]` | `T7` | `To Do` |
+| T1 | `[Finalize concept]` | `[Nitya + Suhana]` | `2` | `[05/04/26]` | `None` | `Done` |
+| T2 | `[Complete BOM]` | `[Nitya + Suhana]` | `1` | `[10/04/26]` | `T1` | `Done` |
+| T3 | `[Test electronics]` | `[Nitya]` | `2` | `[12/04/26]` | `T1` | `Done` |
+| T4 | `[Build structure]` | `[Suhana]` | `4` | `[20/04/26]` | `T1` | `Done` |
+| T5 | `[Write control code]` | `[Nitya]` | `4` | `[19/04/26]` | `T3` | `Done` |
+| T6 | `[Integrate system]` | `[Suhana]` | `4` | `[20/04/26]` | `T4, T5` | `Done` |
+| T7 | `[Playtest]` | `[Nitya + Suhana]` | `2` | `[20/04/26]` | `T6` | `Done` |
+| T8 | `[Refine and document]` | `[Nitya + Suhana]` | `3` | `[20/04/26]` | `T7` | `Done` |
 
 ## 13.3 Responsibility Split
 
 | Area | Main Owner | Support Owner |
 |---|---|---|
-| Concept and gameplay | `[Name]` | `[Name]` |
-| Electronics | `[Name]` | `[Name]` |
-| Coding | `[Name]` | `[Name]` |
-| App | `[Name]` | `[Name]` |
-| Mechanical build | `[Name]` | `[Name]` |
-| Testing | `[Name]` | `[Name]` |
-| Documentation | `[Name]` | `[Name]` |
+| Concept and gameplay | `[Nitya + Suhana]` | `[None]` |
+| Electronics | `[Nitya]` | `[Suhana]` |
+| Coding | `[Nitya]` | `[Suhana]` |
+| App | `[Not Applicable]` | `[Not Applicable]` |
+| Mechanical build | `[Suhana]` | `[Nitya]` |
+| Testing | `[Nitya + Suhana]` | `[None]` |
+| Documentation | `[Suhana]` | `[Nitya]` |
 
 ---
 
@@ -655,43 +666,43 @@ Include:
 
 ### Week 1 — Plan and De-risk
 Expected outcomes:
-- [ ] Idea finalized
+- [✔] Idea finalized
 - [ ] Core interaction decided
-- [ ] Sketches made
+- [✔] Sketches made
 - [ ] BOM completed
-- [ ] Purchase needs identified
-- [ ] Key uncertainty identified
-- [ ] Basic feasibility tested
+- [✔] Purchase needs identified
+- [✔] Key uncertainty identified
+- [✔] Basic feasibility tested
 
 ### Week 2 — Build Subsystems
 Expected outcomes:
-- [ ] Electronics tests completed
+- [✔] Electronics tests completed
 - [ ] CAD / structure planning completed
 - [ ] App UI started if needed
 - [ ] Mechanical concept tested
-- [ ] Main subsystems partially working
+- [✔] Main subsystems partially working
 
 ### Week 3 — Integrate
 Expected outcomes:
 - [ ] Physical body built
-- [ ] Electronics integrated
-- [ ] Code connected to hardware
+- [✔] Electronics integrated
+- [✔] Code connected to hardware
 - [ ] App connected if required
 - [ ] First playable version exists
 
 ### Week 4 — Refine and Finish
 Expected outcomes:
-- [ ] Technical bugs reduced
-- [ ] Playtesting completed
-- [ ] Improvements made
+- [✔] Technical bugs reduced
+- [✔] Playtesting completed
+- [✔] Improvements made
 - [ ] Documentation completed
-- [ ] Final build ready
+- [✔] Final build ready
 
 ## 14.2 Weekly Update Log
 
 | Week | Planned Goal | What Actually Happened | What Changed | Next Steps |
 |---|---|---|---|---|
-| Week 1 | `[Write here]` | `[Write here]` | `[Write here]` | `[Write here]` |
+| Week 1 | `[Finalize concept and basic system plan]` | `[Decided on wall-based dance revolution]]` | `[tried to come up with a system for both hands and feet]` | `[Write here]` |
 | Week 2 | `[Write here]` | `[Write here]` | `[Write here]` | `[Write here]` |
 | Week 3 | `[Write here]` | `[Write here]` | `[Write here]` | `[Write here]` |
 | Week 4 | `[Write here]` | `[Write here]` | `[Write here]` | `[Write here]` |
@@ -769,7 +780,11 @@ Include:
 - revisions.
 
 **Response:**  
-`[Write here]`
+`[the fabrication process was entirely manual and evolved throughout the project. the maze structure was built using waste foamboard, which was cut and assembled to create different layers, supported by scrap HDF wood pieces for stability. the surface was covered with chart paper for a cleaner finish, and tracing sheets were used to define the maze paths where the led strips were placed.
+
+a major part of the process was planning and wiring the led system. we had to break the strips into 22 separate segments and manually solder them together to match the maze layout, which required careful planning of pathways before continuing the build. this wiring and soldering process took up a significant portion of the time.
+
+for the visual elements, monkey graphics were first designed in figma, but since printing did not work out, all elements were hand-cut instead. additional detailing was done using colour pencils, and scrap paper from previous projects was repurposed for decoration. the project went through multiple revisions as the structure kept evolving, which is why flexible materials were chosen over rigid ones like mdf. finishing involved assembling all components and refining the overall look to match the theme.]`
 
 ## 17.2 Build Photos
 Add photos throughout the project.
@@ -785,7 +800,7 @@ Suggested images:
 Example:
 ```md
 
-
+in the folders above
 
 ```
 
@@ -793,9 +808,9 @@ Example:
 
 | Version | Date | What Changed | Why |
 |---|---|---|---|
-| `v1` | `[Date]` | `[Describe]` | `[Reason]` |
-| `v2` | `[Date]` | `[Describe]` | `[Reason]` |
-| `v3` | `[Date]` | `[Describe]` | `[Reason]` |
+| v1 | initial stage | concept shifted from dance/twister-style game to led maze | to create a more original idea and better suit available resources |
+| v2 | development stage | maze layout designed, led segments planned and soldered, basic movement and colour logic implemented | to make the system functional and solve physical constraints of led placement |
+| v3 | final stage | defined a theme, spinner for colour assignment, checkpoints, and win/lose animations | to improve user experience, clarity, and overall engagement |
 
 ---
 
@@ -805,23 +820,29 @@ Example:
 Describe the final version of your project.
 
 **Response:**  
-`[Write here]`
+`[the final version of the project is a fully functional, forest-themed interactive maze game called monkeymania. the player navigates through the maze using four directional switches (up, down, left, right), while led strips visually represent their movement and current state. at the start, a spinning neopixel ring assigns the player a random fruit—banana, blueberry, or tomato—represented through colour. as the player moves through the maze, they encounter checkpoints that change the colour of the light, adding challenge and unpredictability.
+
+the goal is to reach the end of the maze within 60 seconds while maintaining the original colour assigned at the start. the system provides real-time visual feedback through multiple neopixel led segments that form the maze paths, along with distinct animations for winning (multicolour light sequence) and losing (red blinking). the entire structure is built using foamboard, with paper elements used for decoration and theme, and the electronics are connected through soldered led segments and controlled by an esp32 running micropython. the final outcome is a simple but engaging interactive experience that combines physical input and output.
+]`
 
 ## 18.2 What Works Well
-- `[Point 1]`
-- `[Point 2]`
-- `[Point 3]`
+- `[The navigation system works reliably, with each switch correctly moving the player through the maze without major input errors]`
+- `[Led feedback is immediate and accurate, clearly showing both player position and colour changes at checkpoints]`
+- `[The game logic functions as intended, including correct colour assignment, checkpoint-based colour switching, and accurate win/lose detection]`
 
 ## 18.3 What Still Needs Improvement
-- `[Point 1]`
-- `[Point 2]`
-- `[Point 3]`
+- `[The physical structure could be more compact and better integrated for stability and portability]`
+- `[Visual finishing and detailing can be refined.]`
+- `[The starting interaction could be clearer with a dedicated start button instead of relying on any button press]`
 
 ## 18.4 What Changed From the Original Plan
 How did the project change from the initial idea?
 
 **Response:**  
-`[Write here]`
+`[The project evolved significantly from the initial idea. originally, we planned to create a game inspired by dance revolution and twister, focusing more on physical movement and coordination. however, we decided to shift towards a more original and achievable concept that better suited our resources and time constraints, leading to the development of an interactive led maze.
+
+as the idea progressed, the design became more refined and structured. the early concept of the maze was quite basic, with simple light changes at certain points and no clear theme. over time, this developed into a more cohesive experience with a forest/monkey narrative and a fruit-based colour system, making the interaction more engaging and intuitive. technically, the project also changed in terms of execution as initially, the maze layout and wiring were loosely planned, but during the building process, we had to rethink how the led strips would be segmented and soldered due to physical constraints. this led to a more modular approach, with multiple led segments connected to form the final maze. overall, the project shifted from a generic idea to a more defined, interactive system with clearer gameplay and identity.
+]`
 
 ---
 
@@ -833,7 +854,7 @@ What slowed you down?
 How well did you manage time, tasks, and responsibilities?
 
 **Response:**  
-`[Write here]`
+`[We worked well by dividing tasks based on strengths and supporting each other during testing and troubleshooting. What slowed us down was resolving technical issues like wiring and soldering along with lack of availability of materials, which required multiple iterations. overall, we managed time and responsibilities effectively, adjusting tasks when needed and ensuring the project was completed with all core features working.]`
 
 ## 19.2 Technical Reflection
 What did you learn about:
@@ -844,7 +865,9 @@ What did you learn about:
 - integration?
 
 **Response:**  
-`[Write here]`
+`[we learned how to work with electronics by managing multiple led strips, soldering connections, and ensuring stable power using a buck converter. in coding, we understood how to structure logic using states, handle inputs with debounce, and control neopixels for dynamic visual output.
+
+we also learned that even without moving parts, mechanisms can be created through system logic and interaction. in fabrication, we explored building with foamboard and adapting materials to fit the soft design. Most importantly, we learned integration, how to bring together code, electronics, and physical structure into one functioning, cohesive system.]`
 
 ## 19.3 Design Reflection
 What did you learn about:
@@ -856,37 +879,38 @@ What did you learn about:
 - iteration?
 
 **Response:**  
-`[Write here]`
+`[we learned that play works best when rules are simple but outcomes are dynamic. Clarity comes from instant visual feedback, and delight comes from small elements like colour and theme. Physical interaction must be responsive for the system to feel reliable. using familiar ideas improves player understanding, and continuous iteration helped us refine both the concept and execution.]`
 
 ## 19.4 If You Had One More Week
 What would you improve next?
 
 **Response:**  
-`[Write here]`
+`[if we had one more week, we would further refine the visual finish and improve the overall structure by integrating the breadboard and electronics more seamlessly into the body of the maze, making it more compact and portable. while the current setup functions effectively, this would enhance durability and ease of handling. we would also add a dedicated start button to make the interaction even more intuitive and clearly define the beginning, also work on a small rule sheet for further clarity. 
+]`
 
 ---
 
 # 20. Final Submission Checklist
 
 Before submission, confirm that:
-- [ ] Team details are complete
-- [ ] Project description is complete
-- [ ] Inspiration sources are included
-- [ ] Player journey is written
-- [ ] Sketches are added
-- [ ] BOM is complete
-- [ ] Purchase list is complete
-- [ ] Budget summary is complete
+- [✔] Team details are complete
+- [✔] Project description is complete
+- [✔] Inspiration sources are included
+- [✔] Player journey is written
+- [✔] Sketches are added
+- [✔] BOM is complete
+- [✔] Purchase list is complete
+- [✔] Budget summary is complete
 - [ ] Mechanical planning is documented if applicable
 - [ ] App planning is documented if applicable
-- [ ] Code flowchart is added
-- [ ] Task breakdown is complete
-- [ ] Weekly logs are updated
-- [ ] Risk register is complete
-- [ ] Testing log is updated
-- [ ] Playtesting notes are included
-- [ ] Build photos are included
-- [ ] Final reflection is written
+- [✔] Code flowchart is added
+- [✔] Task breakdown is complete
+- [✔] Weekly logs are updated
+- [✔] Risk register is complete
+- [✔] Testing log is updated
+- [✔] Playtesting notes are included
+- [✔] Build photos are included
+- [✔] Final reflection is written
 
 ---
 
@@ -919,9 +943,9 @@ project-repo/
 # 22. Instructor Review
 
 ## 22.1 Proposal Approval
-- [ ] Approved to proceed
-- [ ] Approved with changes
-- [ ] Rework required before proceeding
+- [✔] Approved to proceed
+- [✔] Approved with changes
+- [✔] Rework required before proceeding
 
 **Instructor comments:**  
 `[Instructor fills this section]`
