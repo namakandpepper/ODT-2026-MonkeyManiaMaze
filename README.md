@@ -702,10 +702,10 @@ Expected outcomes:
 
 | Week | Planned Goal | What Actually Happened | What Changed | Next Steps |
 |---|---|---|---|---|
-| Week 1 | `[Finalize concept and basic system plan]` | `[Decided on wall-based dance revolution]]` | `[tried to come up with a system for both hands and feet]` | `[Write here]` |
-| Week 2 | `[Write here]` | `[Write here]` | `[Write here]` | `[Write here]` |
-| Week 3 | `[Write here]` | `[Write here]` | `[Write here]` | `[Write here]` |
-| Week 4 | `[Write here]` | `[Write here]` | `[Write here]` | `[Write here]` |
+| Week 1 | `[Finalize concept and basic system plan]` | `[Decided on wall-based dance revolution]]` | `[tried to come up with a system for both hands and feet]` | `[Define how the game will pan out]` |
+| Week 2 | `[Change the concept due to its unoriginality]` | `[Decided on a maze that uses the name navigation/switch pads as the dance revoltuion keys]` | `[Created a maze and story to fit the context/experience/game]` | `[understand how to navigate the maze using LEDs]` |
+| Week 3 | `[Build structure and test basic electronics]` | `[LEDs were not able to extend from junctions, the maze could only have one path]` | `[We resoldered and planned/recreated a maze path that simulated following a path instead of just being straight forward]` | `[Build the maze, add a timer and add the checkpoints which change colours, add wins or losses.]` |
+| Week 4 | `[Complete both the maze and the navigation panel]` | `[had to rearrange the build several times, accomodate build according to the wiring]` | `[We had to eliminate a couple ideas since it didn't fit onto the maze/couldn't sustain the weight of the additions.]` | `[Finalise build, make it clean and have it serve the purpose it was meant to serve.]` |
 
 ---
 
@@ -715,16 +715,16 @@ Expected outcomes:
 
 | Risk | Type | Likelihood | Impact | Mitigation Plan | Owner |
 |---|---|---|---|---|---|
-| `[Example: Bluetooth disconnects]` | `Technical` | `Medium` | `High` | `[Fallback interaction / simplify connection flow]` | `[Name]` |
-| `[Example: Structure breaks during play]` | `Mechanical` | `Medium` | `High` | `[Reinforce joints / change material]` | `[Name]` |
-| `[Risk]` | `[Technical / Material / Time / Gameplay]` | `[Low/Medium/High]` | `[Low/Medium/High]` | `[Plan]` | `[Name]` |
-| `[Risk]` | `[Type]` | `[Low/Medium/High]` | `[Low/Medium/High]` | `[Plan]` | `[Name]` |
+| `[The LED strips lose their soldering/we burn the very limited LED strips]` | `Technical` | `High` | `High` | `[Tape everything down as soon as its been soldered]` | `[Nitya]` |
+| `[Foamboard instead of MDF (structure splits)]` | `Physical` | `Low` | `High` | `Change material/trace a sheet of paper to trace onto foamboard` | `[Suhana]` |
+| `[Using a Buck Converter and the voltage gets too high]` | `[Technical]` | `[Low/Medium]` | `[High]` | `[Have backup systems borrowed from other people]` | `[Nitya + Suhana]` |
+| `[Wires tangled/disorganised/breadboard being under the maze]` | `[Technical]` | `[Medium]` | `[High]` | `[Adjust the height of the maze, have the wires hidden and organised under the maze]` | `[Suhana + Nitya]` |
 
 ## 15.2 Biggest Unknown Right Now
 What is the single biggest uncertainty in your project at this stage?
 
 **Response:**  
-`[Write here]`
+`[If we are able to have the appearance match the code, a silly fun maze that serves the arcade , nostalgic experience.]`
 
 ---
 
@@ -734,34 +734,35 @@ What is the single biggest uncertainty in your project at this stage?
 
 | What Needs Testing | How You Will Test It | Success Condition |
 |---|---|---|
-| `[Bluetooth connection]` | `[Method]` | `[What counts as success?]` |
-| `[Mechanism movement]` | `[Method]` | `[What counts as success?]` |
-| `[Sensor behavior]` | `[Method]` | `[What counts as success?]` |
-| `[App communication]` | `[Method]` | `[What counts as success?]` |
+| `[LEDs sync up to follow path maze]` | `[Run the code over and over]` | `[it follow the path relative to the navigational switches pressed.]` |
+| `[The checkpoints where the colour changes]` | `[^]` | `[^]` |
+| `[Final Build/Visuals]` | `[testing several materials: cardboard/paper/foamboard]` | `[when thhe build is able to sustain the weight of the breadboard + wires + switches]` |
+
 
 ## 16.2 Playtesting Plan
 
 | Question | How You Will Check |
 |---|---|
-| Do players understand what to do? | `[Method]` |
-| Is the interaction satisfying? | `[Method]` |
-| Do players want another turn? | `[Method]` |
-| Is the challenge balanced? | `[Method]` |
-| Is the response clear and immediate? | `[Method]` |
+| Do players understand what to do? | `[Have them play the maze with limitrd instructions, the shape (start and end) of the maze serve as signals]` |
+| Is the interaction satisfying? | `[Yes, it's smooth and visually appealing since the light is diffused]` |
+| Do players want another turn? | `[Yes, to understand how many paths they can take, to test the random colour switch and if they can do it under time.]` |
+| Is the challenge balanced? | `[Yes, it's simple and to the point, visuals explain the rules.]` |
+| Is the response clear and immediate? | `[Yes, maze responds instantly to the switches (navigational arrows).]` |
 
 ## 16.3 Testing and Debugging Log
 
 | Date | Problem Found | Type | What You Tried | Result | Next Action |
 |---|---|---|---|---|---|
-| `[Date]` | `[Describe issue]` | `[Technical / Mechanical / UI / Gameplay]` | `[What you did]` | `[Worked / Partly / Failed]` | `[Next step]` |
-| `[Date]` | `[Describe issue]` | `[Type]` | `[What you did]` | `[Result]` | `[Next step]` |
+| `[20 April]` | `[Maze is unable to respond accurately to the switches]` | `[Technical/Gameplay]` | `[Redid the Code]` | `[Partly]` | `[Add colour switch checkpoints]` |
+| `[21 April]` | `[Colours not changing under checkpoints]` | `[Technical/Gameplay]` | `[^]` | `[Succesful]` | `[Pair it with the Neopixel ring]` |
+| `[21 April]` | `[Weight of the maze is messing with the breadboard]` | `[Physical Build]` | `[Add supports on the underside (scrap) due to shortage of time]` | `[Successful]` | `[Make it visually fit the narrative.]` |
 
 ## 16.4 Playtesting Notes
 
 | Tester | What They Did | What Confused Them | What They Enjoyed | What You Will Change |
 |---|---|---|---|---|
-| `[Peer / friend / classmate]` | `[Observation]` | `[Observation]` | `[Observation]` | `[Action]` |
-| `[Peer / friend / classmate]` | `[Observation]` | `[Observation]` | `[Observation]` | `[Action]` |
+| `[Friend]` | `[Click the switches one too many times when can press and hold to navigate]` | `[How the LEDs don't properly light some junctions unless you've reached the final pixel in the strip]` | `[The lightshow at the end/Visuals/Experience]` | `[how the LEDs are more responsive to the Switches]` |
+| `[Friend]` | `[Did not travel through the colour change checkpoints]` | `[The checkpoints were targets initially which looked like blockages in the path]` | `[How the light responded to the switch]` | `[Change the change of the targets/checkpoints to question marks]` |
 
 ---
 
@@ -801,6 +802,7 @@ Example:
 ```md
 
 in the folders above
+youtube playlist link: 
 
 ```
 
