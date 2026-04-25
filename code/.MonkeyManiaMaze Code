@@ -1,0 +1,621 @@
+import machine
+import time
+import urandom
+import neopixel
+
+# ── Pins ────────────────────────────────────────────────────────────────────
+BTN_UP    = machine.Pin(12, machine.Pin.IN, machine.Pin.PULL_UP)
+BTN_DOWN  = machine.Pin(14, machine.Pin.IN, machine.Pin.PULL_UP)
+BTN_LEFT  = machine.Pin(27, machine.Pin.IN, machine.Pin.PULL_UP)
+BTN_RIGHT = machine.Pin(32, machine.Pin.IN, machine.Pin.PULL_UP)
+
+np_main    = neopixel.NeoPixel(machine.Pin(23), 87)
+np_branch  = neopixel.NeoPixel(machine.Pin(22), 33)
+np_branch2 = neopixel.NeoPixel(machine.Pin(5),  23)
+np_branch3 = neopixel.NeoPixel(machine.Pin(18), 30)
+np_spinner = neopixel.NeoPixel(machine.Pin(19), 16)   # D19: 16-LED ring spinner
+
+# ── Colour palette ──────────────────────────────────────────────────────────
+COLORS = [
+    (255, 20,  80),    # 0: pinkish red
+    (255, 200,  0),    # 1: yellow
+    ( 30, 130, 255),   # 2: pretty blue
+]
+COLOR_OFF = (0, 0, 0)
+COLOR_RED = (255, 0, 0)    # lose blink colour (pure red)
+
+color_index   = 0
+assigned_color_index = 0   # colour the spinner landed on at game start
+
+# ── Game state machine ───────────────────────────────────────────────────────
+# STATE: 'spinning' | 'playing' | 'win' | 'lose'
+game_state = 'spinning'
+
+DEBOUNCE_MS = 80
+last_press  = 0
+at_junc     = False
+
+# ── D23 main ────────────────────────────────────────────────────────────────
+S1_MAX = 12;  s1 = 0
+S2_MAX = 9;   s2 = 0
+S3_MAX = 5;   s3 = 0
+S4_MAX = 8;   s4 = 0
+S5_MAX = 5;   s5 = 0
+S6_MAX = 5;   s6 = 0
+S7_MAX = 14;  s7 = 0
+S8_MAX = 8;   s8 = 0
+S9_MAX = 21;  s9 = 0
+current_seg = 1
+
+# ── D22 branch ──────────────────────────────────────────────────────────────
+B1_START=32; B1_MAX=2;  b1=0
+B2_START=30; B2_MAX=8;  b2=0
+B3_START=22; B3_MAX=9;  b3=0
+B4_START=13; B4_MAX=10; b4=0
+B5_START=3;  B5_MAX=3;  b5=0
+branch_seg = 1
+
+# ── D5 branch ───────────────────────────────────────────────────────────────
+C1_START=1;  C1_MAX=5;  c1=0
+C2_START=6;  C2_MAX=5;  c2=0
+C3_START=11; C3_MAX=8;  c3=0
+C4_START=19; C4_MAX=4;  c4=0
+branch2_seg = 1
+
+# ── D18 branch ──────────────────────────────────────────────────────────────
+D1_START=29; D1_MAX=4;  d1=0
+D2_START=25; D2_MAX=14; d2=0
+D3_START=11; D3_MAX=7;  d3=0
+D4_START=4;  D4_MAX=5;  d4=0
+branch3_seg = 1
+
+# ── Checkpoint tracker ───────────────────────────────────────────────────────
+checkpoint_triggered = {
+    's3_5':  False,
+    'c4_4':  False,
+    's7_14': False,
+    's9_20': False,
+}
+
+def check_and_advance(key, counter, target):
+    global color_index
+    if counter == target and not checkpoint_triggered[key]:
+        checkpoint_triggered[key] = True
+        color_index = (color_index + 1) % len(COLORS)
+    elif counter < target:
+        checkpoint_triggered[key] = False
+
+def current_color():
+    return COLORS[color_index]
+
+# ── All LEDs off ─────────────────────────────────────────────────────────────
+def all_off():
+    for i in range(87): np_main[i]    = COLOR_OFF
+    np_main.write()
+    for i in range(33): np_branch[i]  = COLOR_OFF
+    np_branch.write()
+    for i in range(23): np_branch2[i] = COLOR_OFF
+    np_branch2.write()
+    for i in range(30): np_branch3[i] = COLOR_OFF
+    np_branch3.write()
+    for i in range(16): np_spinner[i] = COLOR_OFF
+    np_spinner.write()
+
+
+all_off()
+
+# ── Render helpers ────────────────────────────────────────────────────────────
+def render_main():
+    c = current_color()
+    for i in range(S1_MAX): np_main[0  + i] = c if i < s1 else COLOR_OFF
+    for i in range(S2_MAX): np_main[12 + i] = c if i < s2 else COLOR_OFF
+    for i in range(S3_MAX): np_main[21 + i] = c if i < s3 else COLOR_OFF
+    for i in range(S4_MAX): np_main[26 + i] = c if i < s4 else COLOR_OFF
+    for i in range(S5_MAX): np_main[34 + i] = c if i < s5 else COLOR_OFF
+    for i in range(S6_MAX): np_main[39 + i] = c if i < s6 else COLOR_OFF
+    for i in range(S7_MAX): np_main[44 + i] = c if i < s7 else COLOR_OFF
+    for i in range(S8_MAX): np_main[58 + i] = c if i < s8 else COLOR_OFF
+    for i in range(S9_MAX): np_main[66 + i] = c if i < s9 else COLOR_OFF
+    np_main.write()
+
+def render_branch():
+    c = current_color()
+    for i in range(B1_MAX): np_branch[B1_START - i] = c if i < b1 else COLOR_OFF
+    for i in range(B2_MAX): np_branch[B2_START - i] = c if i < b2 else COLOR_OFF
+    for i in range(B3_MAX): np_branch[B3_START - i] = c if i < b3 else COLOR_OFF
+    for i in range(B4_MAX): np_branch[B4_START - i] = c if i < b4 else COLOR_OFF
+    for i in range(B5_MAX): np_branch[B5_START - i] = c if i < b5 else COLOR_OFF
+    np_branch.write()
+
+def render_branch2():
+    c = current_color()
+    for i in range(C1_MAX): np_branch2[C1_START + i] = c if i < c1 else COLOR_OFF
+    for i in range(C2_MAX): np_branch2[C2_START + i] = c if i < c2 else COLOR_OFF
+    for i in range(C3_MAX): np_branch2[C3_START + i] = c if i < c3 else COLOR_OFF
+    for i in range(C4_MAX): np_branch2[C4_START + i] = c if i < c4 else COLOR_OFF
+    np_branch2.write()
+
+def render_branch3():
+    c = current_color()
+    for i in range(D1_MAX): np_branch3[D1_START - i] = c if i < d1 else COLOR_OFF
+    for i in range(D2_MAX): np_branch3[D2_START - i] = c if i < d2 else COLOR_OFF
+    for i in range(D3_MAX): np_branch3[D3_START - i] = c if i < d3 else COLOR_OFF
+    for i in range(D4_MAX): np_branch3[D4_START - i] = c if i < d4 else COLOR_OFF
+    np_branch3.write()
+
+def render_all():
+    render_main()
+    render_branch()
+    render_branch2()
+    render_branch3()
+
+# ── Spinner helpers ───────────────────────────────────────────────────────────
+SPINNER_N = 16
+
+def spinner_clear():
+    for i in range(SPINNER_N): np_spinner[i] = COLOR_OFF
+
+def spinner_set_all(c):
+    for i in range(SPINNER_N): np_spinner[i] = c
+
+def spinner_write_head(head, tail_len, c):
+    """Light a comet: bright head + fading tail, rest off."""
+    spinner_clear()
+    for t in range(tail_len):
+        idx = (head - t) % SPINNER_N
+        fade = max(0, 1.0 - t / tail_len)
+        np_spinner[idx] = (int(c[0]*fade), int(c[1]*fade), int(c[2]*fade))
+    np_spinner[head % SPINNER_N] = c   # head always full brightness
+    np_spinner.write()
+
+# ── Spinner sequence ──────────────────────────────────────────────────────────
+def run_spinner(chosen_index):
+    """
+    16-LED ring roulette: chaotic fast spin with random colour bursts,
+    decelerates unpredictably, snaps to chosen colour, triple blink.
+    Total ~2 s (faster than before).
+    """
+    TAIL = 5
+
+    # Random extra laps (1-3) so it never feels the same length
+    extra_laps = (urandom.getrandbits(2) % 3) * SPINNER_N   # 0, 16, or 32 extra steps
+
+    delays = (
+        [12]  * (16 + extra_laps) +  # blazing — random duration
+        [22]  * 16 +                 # fast
+        [40]  * 12 +                 # medium
+        [70]  * 10 +                 # slowing
+        [110] * 8  +                 # slow
+        [160] * 5  +                 # crawling
+        [220] * 4                    # almost stopped
+    )
+
+    # Shuffle a random jitter into each delay (±30%) for organic feel
+    pos = 0
+    col_idx = urandom.getrandbits(2) % 3   # start on a random colour
+    for d in delays:
+        jitter = (urandom.getrandbits(4) % 9) - 4   # -4..+4 ms
+        spinner_write_head(pos, TAIL, COLORS[col_idx % 3])
+        time.sleep_ms(max(8, d + jitter))
+        pos += 1
+        # Change colour at random intervals (not just every lap) for chaos
+        if (urandom.getrandbits(4) % 5) == 0:
+            col_idx += 1
+
+    # Phase 2 — dramatic snap to chosen colour with a single quick wobble
+    chosen_c    = COLORS[chosen_index]
+    overshoot_c = COLORS[(chosen_index + 1) % 3]
+
+    # One overshoot step
+    spinner_write_head(pos + 1, TAIL, overshoot_c)
+    time.sleep_ms(180)
+
+    # Snap back to chosen — full ring
+    spinner_set_all(chosen_c)
+    np_spinner.write()
+    time.sleep_ms(280)
+
+    # Phase 3 — triple blink, full ring, punchy timing
+    for _ in range(3):
+        spinner_clear()
+        np_spinner.write()
+        time.sleep_ms(100)
+        spinner_set_all(chosen_c)
+        np_spinner.write()
+        time.sleep_ms(200)
+
+    time.sleep_ms(150)
+
+# ── Win celebration (3 s) ─────────────────────────────────────────────────────
+def celebrate_win():
+    """
+    3 seconds of multicoloured sparkle chaos — every LED independently
+    flickers between the three game colours at different rates.
+    """
+    def sparkle_frame():
+        for i in range(87):
+            np_main[i]   = COLOR_OFF if (urandom.getrandbits(4) % 5 == 0) else COLORS[urandom.getrandbits(2) % 3]
+        np_main.write()
+        for i in range(33):
+            np_branch[i] = COLOR_OFF if (urandom.getrandbits(4) % 5 == 0) else COLORS[urandom.getrandbits(2) % 3]
+        np_branch.write()
+        for i in range(23):
+            np_branch2[i]= COLOR_OFF if (urandom.getrandbits(4) % 5 == 0) else COLORS[urandom.getrandbits(2) % 3]
+        np_branch2.write()
+        for i in range(30):
+            np_branch3[i]= COLOR_OFF if (urandom.getrandbits(4) % 5 == 0) else COLORS[urandom.getrandbits(2) % 3]
+        np_branch3.write()
+        for i in range(SPINNER_N):
+            np_spinner[i]= COLOR_OFF if (urandom.getrandbits(4) % 5 == 0) else COLORS[urandom.getrandbits(2) % 3]
+        np_spinner.write()
+
+    end = time.ticks_ms() + 2000
+    while time.ticks_diff(end, time.ticks_ms()) > 0:
+        sparkle_frame()
+        time.sleep_ms(55)
+
+    for c in [COLORS[0], COLORS[1], COLORS[2], COLORS[0]]:
+        for i in range(87):       np_main[i]    = c
+        np_main.write()
+        for i in range(33):       np_branch[i]  = c
+        np_branch.write()
+        for i in range(23):       np_branch2[i] = c
+        np_branch2.write()
+        for i in range(30):       np_branch3[i] = c
+        np_branch3.write()
+        spinner_set_all(c)
+        np_spinner.write()
+        time.sleep_ms(100)
+        all_off()
+        time.sleep_ms(50)
+
+    time.sleep_ms(100)
+
+# ── Lose animation (~3 s) ─────────────────────────────────────────────────────
+def animate_lose():
+    """
+    All LEDs flash red 3 times, then everything goes dark.
+    """
+    for blink in range(3):
+        for i in range(87): np_main[i]    = COLOR_RED
+        np_main.write()
+        for i in range(33): np_branch[i]  = COLOR_RED
+        np_branch.write()
+        for i in range(23): np_branch2[i] = COLOR_RED
+        np_branch2.write()
+        for i in range(30): np_branch3[i] = COLOR_RED
+        np_branch3.write()
+        spinner_set_all(COLOR_RED)
+        np_spinner.write()
+        time.sleep_ms(350)
+
+        all_off()
+        time.sleep_ms(300)
+
+    time.sleep_ms(350)
+
+# ── Reset game state ──────────────────────────────────────────────────────────
+def reset_game():
+    global s1,s2,s3,s4,s5,s6,s7,s8,s9
+    global b1,b2,b3,b4,b5
+    global c1,c2,c3,c4
+    global d1,d2,d3,d4
+    global current_seg, branch_seg, branch2_seg, branch3_seg
+    global at_junc, color_index, assigned_color_index, game_state
+    global checkpoint_triggered
+
+    s1=s2=s3=s4=s5=s6=s7=s8=s9 = 0
+    b1=b2=b3=b4=b5 = 0
+    c1=c2=c3=c4 = 0
+    d1=d2=d3=d4 = 0
+    current_seg  = 1
+    branch_seg   = 1
+    branch2_seg  = 1
+    branch3_seg  = 1
+    at_junc      = False
+    for k in checkpoint_triggered: checkpoint_triggered[k] = False
+
+    assigned_color_index = urandom.getrandbits(2) % 3
+    color_index          = assigned_color_index
+    game_state           = 'spinning'
+
+# ── Win/lose check ────────────────────────────────────────────────────────────
+def check_win_lose():
+    if d4 == D4_MAX:
+        if color_index == assigned_color_index:
+            return 'win'
+        else:
+            return 'lose'
+    return None
+
+# ── Wait for any button press ─────────────────────────────────────────────────
+def wait_for_button():
+    """Block until any button is pressed (active-low), then debounce."""
+    while True:
+        if (BTN_UP.value() == 0 or BTN_DOWN.value() == 0 or
+                BTN_LEFT.value() == 0 or BTN_RIGHT.value() == 0):
+            time.sleep_ms(DEBOUNCE_MS)
+            return
+        time.sleep_ms(10)
+
+# ── Button handler ────────────────────────────────────────────────────────────
+def handle_buttons(up, down, left, right):
+    global current_seg, branch_seg, branch2_seg, branch3_seg, at_junc
+    global s1,s2,s3,s4,s5,s6,s7,s8,s9
+    global b1,b2,b3,b4,b5
+    global c1,c2,c3,c4
+    global d1,d2,d3,d4
+    global game_state
+
+    # ── D22 BRANCH ──
+    if current_seg == 0:
+        if branch_seg == 1:
+            if up:
+                if b1 == B1_MAX: branch_seg = 2
+                else: b1 += 1
+            elif down:
+                if b1 > 0: b1 -= 1
+                else: current_seg = 4
+        elif branch_seg == 2:
+            if right:
+                if b2 == B2_MAX: branch_seg = 3
+                else: b2 += 1
+            elif left and b2 > 0: b2 -= 1
+            elif left and b2 == 0: branch_seg = 1
+        elif branch_seg == 3:
+            if up:
+                if b3 == B3_MAX: branch_seg = 4
+                else: b3 += 1
+            elif down and b3 > 0: b3 -= 1
+            elif down and b3 == 0: branch_seg = 2
+        elif branch_seg == 4:
+            if left:
+                if b4 == B4_MAX: branch_seg = 5
+                else: b4 += 1
+            elif right and b4 > 0: b4 -= 1
+            elif right and b4 == 0: branch_seg = 3
+        elif branch_seg == 5:
+            if down and b5 < B5_MAX: b5 += 1
+            elif up and b5 > 0: b5 -= 1
+            elif up and b5 == 0: branch_seg = 4
+        render_branch()
+        render_main()
+        return
+
+    # ── D5 BRANCH ──
+    if current_seg == -1:
+        if branch2_seg == 1:
+            if right:
+                if c1 == C1_MAX: branch2_seg = 2
+                else: c1 += 1
+            elif left:
+                if c1 > 0: c1 -= 1
+                else: current_seg = 1
+        elif branch2_seg == 2:
+            if up:
+                if c2 == C2_MAX: branch2_seg = 3
+                else: c2 += 1
+            elif down and c2 > 0: c2 -= 1
+            elif down and c2 == 0: branch2_seg = 1
+        elif branch2_seg == 3:
+            if right:
+                if c3 == C3_MAX: branch2_seg = 4
+                else: c3 += 1
+            elif left and c3 > 0: c3 -= 1
+            elif left and c3 == 0: branch2_seg = 2
+        elif branch2_seg == 4:
+            if up:
+                if c4 < C4_MAX:
+                    c4 += 1
+                    check_and_advance('c4_4', c4, 4)
+            elif down and c4 > 0: c4 -= 1
+            elif down and c4 == 0: branch2_seg = 3
+        render_branch2()
+        render_main()
+        return
+
+    # ── D18 BRANCH ──
+    if current_seg == -2:
+        if branch3_seg == 1:
+            if right:
+                if d1 == D1_MAX: branch3_seg = 2
+                else: d1 += 1
+            elif left:
+                if d1 > 0: d1 -= 1
+                else: current_seg = 9
+        elif branch3_seg == 2:
+            if up:
+                if d2 == D2_MAX: branch3_seg = 3
+                else: d2 += 1
+            elif down and d2 > 0: d2 -= 1
+            elif down and d2 == 0: branch3_seg = 1
+        elif branch3_seg == 3:
+            if right:
+                if d3 == D3_MAX: branch3_seg = 4
+                else: d3 += 1
+            elif left and d3 > 0: d3 -= 1
+            elif left and d3 == 0: branch3_seg = 2
+        elif branch3_seg == 4:
+            if up:
+                if d4 < D4_MAX:
+                    d4 += 1
+                    result = check_win_lose()
+                    if result == 'win':
+                        render_all()
+                        game_state = 'win'
+                        return
+                    elif result == 'lose':
+                        render_all()
+                        game_state = 'lose'
+                        return
+            elif down and d4 > 0: d4 -= 1
+            elif down and d4 == 0: branch3_seg = 3
+        render_branch3()
+        render_main()
+        return
+
+    # ── MAIN PATH JUNCTION ──
+    if at_junc:
+        if current_seg == 2:
+            if down: at_junc = False; current_seg = 1; s1 = S1_MAX
+            else: at_junc = False
+        elif current_seg == 3:
+            if left: at_junc = False; current_seg = 2; s2 = S2_MAX
+            else: at_junc = False
+        elif current_seg == 4:
+            if down: at_junc = False; current_seg = 3; s3 = S3_MAX
+            else: at_junc = False
+        elif current_seg == 5:
+            if right: at_junc = False; current_seg = 4; s4 = S4_MAX
+            else: at_junc = False
+        elif current_seg == 6:
+            if down: at_junc = False; current_seg = 5; s5 = S5_MAX
+            else: at_junc = False
+        elif current_seg == 7:
+            if right: at_junc = False; current_seg = 6; s6 = S6_MAX
+            else: at_junc = False
+        elif current_seg == 8:
+            if up: at_junc = False; current_seg = 7; s7 = S7_MAX
+            else: at_junc = False
+        elif current_seg == 9:
+            if right: at_junc = False; current_seg = 8; s8 = S8_MAX
+            else: at_junc = False
+        render_all()
+        return
+
+    # ── MAIN PATH SEGMENTS ──
+    if current_seg == 1:
+        if right:
+            if s1 == 3: current_seg = -1; branch2_seg = 1
+            elif s1 == S1_MAX: at_junc = True; current_seg = 2
+        elif up:
+            if s1 < S1_MAX: s1 += 1
+            else: at_junc = True; current_seg = 2
+        elif down:
+            if s1 > 0: s1 -= 1
+
+    elif current_seg == 2:
+        if right:
+            if s2 < S2_MAX: s2 += 1
+            else: at_junc = True; current_seg = 3
+        elif left:
+            if s2 > 0: s2 -= 1
+            else: current_seg = 1; s1 = S1_MAX
+
+    elif current_seg == 3:
+        if up:
+            if s3 < S3_MAX:
+                s3 += 1
+                check_and_advance('s3_5', s3, 5)
+            else: at_junc = True; current_seg = 4
+        elif down:
+            if s3 > 0: s3 -= 1
+            else: current_seg = 2; s2 = S2_MAX
+
+    elif current_seg == 4:
+        if s4 == 5 and up: current_seg = 0; branch_seg = 1
+        elif left:
+            if s4 < S4_MAX: s4 += 1
+            else: at_junc = True; current_seg = 5
+        elif right:
+            if s4 > 0: s4 -= 1
+            else: current_seg = 3; s3 = S3_MAX
+
+    elif current_seg == 5:
+        if up:
+            if s5 < S5_MAX: s5 += 1
+            else: at_junc = True; current_seg = 6
+        elif down:
+            if s5 > 0: s5 -= 1
+            else: current_seg = 4; s4 = S4_MAX
+
+    elif current_seg == 6:
+        if left:
+            if s6 < S6_MAX: s6 += 1
+            else: at_junc = True; current_seg = 7
+        elif right:
+            if s6 > 0: s6 -= 1
+            else: current_seg = 5; s5 = S5_MAX
+
+    elif current_seg == 7:
+        if down:
+            if s7 < S7_MAX:
+                s7 += 1
+                check_and_advance('s7_14', s7, 14)
+            else: at_junc = True; current_seg = 8
+        elif up:
+            if s7 > 0: s7 -= 1
+            else: current_seg = 6; s6 = S6_MAX
+
+    elif current_seg == 8:
+        if left:
+            if s8 < S8_MAX: s8 += 1
+            else: at_junc = True; current_seg = 9
+        elif right:
+            if s8 > 0: s8 -= 1
+            else: current_seg = 7; s7 = S7_MAX
+
+    elif current_seg == 9:
+        if s9 == 4 and right: current_seg = -2; branch3_seg = 1
+        elif up:
+            if s9 < S9_MAX:
+                s9 += 1
+                check_and_advance('s9_20', s9, 20)
+        elif down:
+            if s9 > 0: s9 -= 1
+            else: current_seg = 8; s8 = S8_MAX
+
+    render_all()
+
+# ── Main loop ─────────────────────────────────────────────────────────────────
+def loop():
+    global last_press, game_state
+
+    reset_game()   # sets game_state = 'spinning'
+
+    while True:
+
+        # ── SPINNING: wait for button, THEN run spinner ──
+        if game_state == 'spinning':
+            all_off()
+            wait_for_button()            # ← press any button to start
+            run_spinner(assigned_color_index)
+            spinner_set_all(COLORS[assigned_color_index])
+            np_spinner.write()
+            render_all()
+            game_state = 'playing'
+            last_press  = time.ticks_ms()
+            continue
+
+        # ── PLAYING: normal button handling ──
+        if game_state == 'playing':
+            up    = (BTN_UP.value()    == 0)
+            down  = (BTN_DOWN.value()  == 0)
+            left  = (BTN_LEFT.value()  == 0)
+            right = (BTN_RIGHT.value() == 0)
+
+            if up or down or left or right:
+                now = time.ticks_ms()
+                if time.ticks_diff(now, last_press) > DEBOUNCE_MS:
+                    last_press = now
+                    handle_buttons(up, down, left, right)
+            time.sleep_ms(5)
+            continue
+
+        # ── WIN ──
+        if game_state == 'win':
+            celebrate_win()
+            all_off()
+            time.sleep_ms(500)
+            reset_game()                 # sets game_state = 'spinning'
+            continue                     # loop back → waits for button press
+
+        # ── LOSE ──
+        if game_state == 'lose':
+            animate_lose()
+            all_off()
+            time.sleep_ms(500)
+            reset_game()                 # sets game_state = 'spinning'
+            continue                     # loop back → waits for button press
+
+loop()
