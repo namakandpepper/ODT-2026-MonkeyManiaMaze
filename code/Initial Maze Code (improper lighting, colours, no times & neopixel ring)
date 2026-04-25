@@ -1,0 +1,221 @@
+import machine
+import neopixel
+import time
+
+BTN_UP    = machine.Pin(12, machine.Pin.IN, machine.Pin.PULL_UP)
+BTN_DOWN  = machine.Pin(14, machine.Pin.IN, machine.Pin.PULL_UP)
+BTN_LEFT  = machine.Pin(27, machine.Pin.IN, machine.Pin.PULL_UP)
+BTN_RIGHT = machine.Pin(32, machine.Pin.IN, machine.Pin.PULL_UP)
+
+np_main   = neopixel.NeoPixel(machine.Pin(23), 87)
+np_branch = neopixel.NeoPixel(machine.Pin(22), 33)
+
+COLOR_ON  = (255, 20, 147)
+COLOR_OFF = (0, 0, 0)
+
+DEBOUNCE_MS = 200
+last_press  = 0
+
+# ── D23 ──
+S1_MAX = 12;  s1 = 0
+S2_MAX = 9;   s2 = 0
+S3_MAX = 5;   s3 = 0
+S4_MAX = 8;   s4 = 0
+S5_MAX = 5;   s5 = 0
+S6_MAX = 5;   s6 = 0
+S7_MAX = 14;  s7 = 0
+S8_MAX = 8;   s8 = 0
+S9_MAX = 21;  s9 = 0
+
+current_seg = 1   # active D23 segment, 0 = on D22 branch
+
+# ── D22 branch ──
+# fills from index 32 backwards
+# B1: 32,31,30         (3 leds)  UP=add   DOWN=sub
+# B2: 29..22           (8 leds)  RIGHT=add LEFT=sub
+# B3: 21..13           (9 leds)  UP=add   DOWN=sub
+# B4: 12..3            (10 leds) LEFT=add  RIGHT=sub
+# B5: 2,1,0            (3 leds)  DOWN=add UP=sub
+
+B1_START=32; B1_MAX=3;  b1=0
+B2_START=29; B2_MAX=8;  b2=0
+B3_START=21; B3_MAX=9;  b3=0
+B4_START=12; B4_MAX=10; b4=0
+B5_START=2;  B5_MAX=3;  b5=0
+
+branch_seg = 1   # active D22 segment
+
+# current_seg == 0 means we are ON the D22 branch
+# s4 == 5 is the junction point
+
+# boot — all off
+for i in range(87): np_main[i]   = COLOR_OFF
+np_main.write()
+for i in range(33): np_branch[i] = COLOR_OFF
+np_branch.write()
+
+def render_main():
+    for i in range(S1_MAX): np_main[0  + i] = COLOR_ON if i < s1 else COLOR_OFF
+    for i in range(S2_MAX): np_main[12 + i] = COLOR_ON if i < s2 else COLOR_OFF
+    for i in range(S3_MAX): np_main[21 + i] = COLOR_ON if i < s3 else COLOR_OFF
+    for i in range(S4_MAX): np_main[26 + i] = COLOR_ON if i < s4 else COLOR_OFF
+    for i in range(S5_MAX): np_main[34 + i] = COLOR_ON if i < s5 else COLOR_OFF
+    for i in range(S6_MAX): np_main[39 + i] = COLOR_ON if i < s6 else COLOR_OFF
+    for i in range(S7_MAX): np_main[44 + i] = COLOR_ON if i < s7 else COLOR_OFF
+    for i in range(S8_MAX): np_main[58 + i] = COLOR_ON if i < s8 else COLOR_OFF
+    for i in range(S9_MAX): np_main[66 + i] = COLOR_ON if i < s9 else COLOR_OFF
+    np_main.write()
+
+def render_branch():
+    for i in range(B1_MAX): np_branch[B1_START - i] = COLOR_ON if i < b1 else COLOR_OFF
+    for i in range(B2_MAX): np_branch[B2_START - i] = COLOR_ON if i < b2 else COLOR_OFF
+    for i in range(B3_MAX): np_branch[B3_START - i] = COLOR_ON if i < b3 else COLOR_OFF
+    for i in range(B4_MAX): np_branch[B4_START - i] = COLOR_ON if i < b4 else COLOR_OFF
+    for i in range(B5_MAX): np_branch[B5_START - i] = COLOR_ON if i < b5 else COLOR_OFF
+    np_branch.write()
+
+def handle_buttons(up, down, left, right):
+    global current_seg, branch_seg
+    global s1,s2,s3,s4,s5,s6,s7,s8,s9
+    global b1,b2,b3,b4,b5
+
+    # ════════════════════════════════
+    # ON D22 BRANCH (current_seg == 0)
+    # ════════════════════════════════
+    if current_seg == 0:
+
+        # B1: UP=add, DOWN=sub
+        if branch_seg == 1:
+            if up:
+                if b1 == B1_MAX: branch_seg = 2
+                else: b1 += 1
+            elif down:
+                if b1 > 0:
+                    b1 -= 1
+                else:
+                    # reverse back to D23 seg4 at LED 5
+                    current_seg = 4
+
+        # B2: RIGHT=add, LEFT=sub
+        elif branch_seg == 2:
+            if right:
+                if b2 == B2_MAX: branch_seg = 3
+                else: b2 += 1
+            elif left and b2 > 0: b2 -= 1
+            elif left and b2 == 0: branch_seg = 1
+
+        # B3: UP=add, DOWN=sub
+        elif branch_seg == 3:
+            if up:
+                if b3 == B3_MAX: branch_seg = 4
+                else: b3 += 1
+            elif down and b3 > 0: b3 -= 1
+            elif down and b3 == 0: branch_seg = 2
+
+        # B4: LEFT=add, RIGHT=sub
+        elif branch_seg == 4:
+            if left:
+                if b4 == B4_MAX: branch_seg = 5
+                else: b4 += 1
+            elif right and b4 > 0: b4 -= 1
+            elif right and b4 == 0: branch_seg = 3
+
+        # B5: DOWN=add, UP=sub
+        elif branch_seg == 5:
+            if down and b5 < B5_MAX: b5 += 1
+            elif up and b5 > 0: b5 -= 1
+            elif up and b5 == 0: branch_seg = 4
+
+        render_branch()
+        render_main()
+        return
+
+    # ════════════════════════════════
+    # ON D23 MAIN PATH
+    # ════════════════════════════════
+
+    if current_seg == 1:
+        if up:
+            if s1 == S1_MAX: current_seg = 2
+            else: s1 += 1
+        elif down and s1 > 0: s1 -= 1
+
+    elif current_seg == 2:
+        if right:
+            if s2 == S2_MAX: current_seg = 3
+            else: s2 += 1
+        elif left and s2 > 0: s2 -= 1
+
+    elif current_seg == 3:
+        if up:
+            if s3 == S3_MAX: current_seg = 4
+            else: s3 += 1
+        elif down and s3 > 0: s3 -= 1
+
+    elif current_seg == 4:
+        # ── JUNCTION at s4 == 5 ──
+        if s4 == 5:
+            if up:
+                # take D22 branch
+                current_seg = 0
+                branch_seg  = 1
+            elif left:
+                # continue D23 normally past junction
+                s4 += 1
+            elif right:
+                # subtract back from junction
+                s4 -= 1
+        else:
+            if left:
+                if s4 == S4_MAX: current_seg = 5
+                else: s4 += 1
+            elif right and s4 > 0: s4 -= 1
+
+    elif current_seg == 5:
+        if up:
+            if s5 == S5_MAX: current_seg = 6
+            else: s5 += 1
+        elif down and s5 > 0: s5 -= 1
+
+    elif current_seg == 6:
+        if left:
+            if s6 == S6_MAX: current_seg = 7
+            else: s6 += 1
+        elif right and s6 > 0: s6 -= 1
+
+    elif current_seg == 7:
+        if down:
+            if s7 == S7_MAX: current_seg = 8
+            else: s7 += 1
+        elif up and s7 > 0: s7 -= 1
+
+    elif current_seg == 8:
+        if left:
+            if s8 == S8_MAX: current_seg = 9
+            else: s8 += 1
+        elif right and s8 > 0: s8 -= 1
+
+    elif current_seg == 9:
+        if up and s9 < S9_MAX: s9 += 1
+        elif down and s9 > 0:  s9 -= 1
+
+    render_main()
+    render_branch()
+
+def loop():
+    global last_press
+    while True:
+        up    = (BTN_UP.value()    == 0)
+        down  = (BTN_DOWN.value()  == 0)
+        left  = (BTN_LEFT.value()  == 0)
+        right = (BTN_RIGHT.value() == 0)
+
+        if up or down or left or right:
+            now = time.ticks_ms()
+            if time.ticks_diff(now, last_press) > DEBOUNCE_MS:
+                last_press = now
+                handle_buttons(up, down, left, right)
+
+        time.sleep_ms(10)
+
+loop()
