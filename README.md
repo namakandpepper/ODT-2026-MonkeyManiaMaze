@@ -802,7 +802,8 @@ Example:
 ```md
 
 in the folders above
-youtube playlist link: 
+YouTube Playlist link: https://youtube.com/playlist?list=PLBwg9Ucbf0YuxVWV-OoMGC3f63-sChL8W&si=eBbkx2TeQ9HpudMA
+Google Drive Link for photos/video: https://drive.google.com/drive/folders/1R3CuoOw0XIkKwMfL8VZz4gAkJpu6fOgZ?usp=sharing
 
 ```
 
